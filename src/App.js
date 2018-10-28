@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Home from './views/home';
+import AccountHome from './views/account';
 import { BrowserRouter, Route } from 'react-router-dom';
 import './App.css';
-import 'bootstrap/dist/css/bootstrap.css';
 
 class App extends Component {
   render() {
@@ -12,6 +12,11 @@ class App extends Component {
           <Route exact={true} path='/' render={() => (
             <div className="App">
               <Home />
+            </div>
+          )}/>
+          <Route path='/account' render={() => (
+            <div className="App">
+              <AccountHome />
             </div>
           )}/>
         </div>
