@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { DataTable } from 'carbon-components-react';
+
 import Header from '../../components/Header';
 import './style.css';
 
@@ -20,7 +21,7 @@ class Home extends Component {
     return (
       <div>
         <Header />
-        <main id='main-content' className="with-header">
+        <main id="main-content" className="with-header">
           <Paper elevation={0} square={true} className="wsl-heading">
             <div className="constrain-width">
               <Typography variant={'h4'}>Home</Typography>

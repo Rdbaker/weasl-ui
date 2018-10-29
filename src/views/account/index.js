@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { Route } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
 import Header from '../../components/Header';
 import RouteTabs from '../../components/RouteTabs';
 import AccountSettings from './settings';
 import AccountSnippet from './snippet';
-import PropTypes from 'prop-types';
 
 class AccountHome extends Component {
   render() {
