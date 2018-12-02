@@ -2,9 +2,9 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: './src/shim/index.js',
+  entry: './src/index.js',
   output: {
-    filename: 'shim.js',
+    filename: 'index.js',
     path: path.resolve(__dirname, '..', '..', 'dist')
   },
   devServer: {
@@ -12,7 +12,7 @@ module.exports = {
     compress: true,
     inline: true,
     port: 9000,
-    index: path.join(__dirname, '..', '..', 'dist', 'index-shim.html'),
+    index: path.join(__dirname, '..', '..', 'dist', 'index.html'),
   },
   devtool: 'eval-source-map',
   plugins: [
@@ -60,10 +60,5 @@ module.exports = {
         }]
       }
     ]
-  },
-  resolve: {
-    alias: {
-      'shared': path.resolve(__dirname, '..', '..', `src/shared`),
-    }
   }
 };

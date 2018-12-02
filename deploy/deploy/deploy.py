@@ -57,7 +57,7 @@ def upload_files(bucket):
         reldir = os.path.relpath('.', Constants.DIST_DIR)
         relfile = os.path.join(reldir, fname)
         # boto3 doesn't like relative files
-        uploadfile = os.path.relpath(fname, os.path.dirname(os.path.abspath(__file__)) + '/tmp/widget-ui/dist')
+        uploadfile = os.path.relpath(fname, Constants.DIST_DIR)
         # get the file extension
         _, file_extension = os.path.splitext(relfile)
         extra_args = { 'ACL':'public-read', 'ContentType': get_content_type_from_ext(file_extension) }
