@@ -19,6 +19,7 @@ deploy_logger = logging.getLogger('weasl.uploader')
 
 S3 = boto3.resource('s3')
 
+UNCACHED_FILE_EXTENSIONS = ['.html', '.json', '.ico']
 
 def upload_arg_parser():
     parser = argparse.ArgumentParser(
@@ -61,7 +62,7 @@ def upload_files(bucket):
         # get the file extension
         _, file_extension = os.path.splitext(relfile)
         extra_args = { 'ACL':'public-read', 'ContentType': get_content_type_from_ext(file_extension) }
-        if file_extension == '.html':
+        if file_extension in UNCACHED_FILE_EXTENSIONS:
             extra_args.update({
                 'CacheControl': 'no-cache, no-store, must-revalidate',
                 'Expires': 0,
