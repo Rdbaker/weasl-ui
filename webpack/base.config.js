@@ -5,14 +5,14 @@ module.exports = {
   entry: './src/index.js',
   output: {
     filename: 'index.js',
-    path: path.resolve(__dirname, '..', '..', 'dist')
+    path: path.resolve(__dirname, '..', 'build')
   },
   devServer: {
-    contentBase: path.join(__dirname, '..', '..', 'dist'),
+    contentBase: path.join(__dirname, '..', 'public'),
     compress: true,
     inline: true,
-    port: 9000,
-    index: path.join(__dirname, '..', '..', 'dist', 'index.html'),
+    port: 3000,
+    index: path.join(__dirname, '..', 'public', 'index.html'),
   },
   devtool: 'eval-source-map',
   plugins: [
@@ -24,7 +24,7 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        include: path.join(__dirname, '..', '..', 'src'),
+        include: path.join(__dirname, '..', 'src'),
         exclude: /(node_modules)/,
         loader: require.resolve('babel-loader'),
         options: {
@@ -60,5 +60,19 @@ module.exports = {
         }]
       }
     ]
+  },
+  resolve: {
+    alias: {
+      'actions': path.resolve(__dirname, '..', `src/actions`),
+      'api': path.resolve(__dirname, '..', `src/api`),
+      'audio': path.resolve(__dirname, '..', `src/audio`),
+      'components': path.resolve(__dirname, '..', `src/components`),
+      'config': path.resolve(__dirname, '..', `src/config`),
+      'constants': path.resolve(__dirname, '..', `src/constants`),
+      'containers': path.resolve(__dirname, '..', `src/containers`),
+      'images': path.resolve(__dirname, '..', `src/images`),
+      'modules': path.resolve(__dirname, '..', `src/modules`),
+      'utils': path.resolve(__dirname, '..', `src/utils`),
+    }
   }
 };
