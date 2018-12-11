@@ -17,7 +17,7 @@ class Constants(object):
     REPO_SSH = 'git@bitbucket.org:weasl/weasl-ui.git'
     TMP_DIR = os.path.join(os.getcwd(), 'tmp')
     REPO_DIR = os.path.join(TMP_DIR, 'weasl-ui')
-    DIST_DIR = os.path.join(REPO_DIR, 'build')
+    DIST_DIR = os.path.join(REPO_DIR, 'dist')
     COMMANDS = {
         'install': 'yarn install'.split(),
         'build': 'yarn build'.split(),
