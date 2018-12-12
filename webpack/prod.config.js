@@ -11,6 +11,7 @@ module.exports = merge(common, {
     path: path.resolve(__dirname, '..', 'dist'),
     filename: 'deploys/app.[chunkhash].js',
     sourceMapFilename: 'deploys/app.[chunkhash].js.map',
+    publicPath: '/',
   },
   plugins: [
     new WebpackChunkHash({
