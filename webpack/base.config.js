@@ -13,6 +13,7 @@ module.exports = {
     inline: true,
     port: 3000,
     index: path.join(__dirname, '..', 'public', 'index.html'),
+    historyApiFallback: true,
   },
   devtool: 'eval-source-map',
   plugins: [
@@ -73,6 +74,7 @@ module.exports = {
       'images': path.resolve(__dirname, '..', `src/images`),
       'modules': path.resolve(__dirname, '..', `src/modules`),
       'utils': path.resolve(__dirname, '..', `src/utils`),
+      'views': path.resolve(__dirname, '..', `src/views`),
     }
   }
 };

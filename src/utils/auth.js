@@ -13,4 +13,12 @@ export const getToken = () => {
   } else {
     return document.cookie.slice(startSlice, startIndex + endIndex);
   }
-}
+};
+
+export const setToken = (token) => {
+  // TODO: this should be configurable via settings
+  const expireDate = new Date();
+  expireDate.setDate(expireDate.getDate() + 7);
+
+  document.cookie = `${COOKIE_NAME}=${token};expires=${expireDate.toUTCString()};path=/`;
+};

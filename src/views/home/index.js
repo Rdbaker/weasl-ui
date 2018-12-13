@@ -3,7 +3,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { DataTable } from 'carbon-components-react';
 
-import Header from '../../components/Header';
+import Header from 'components/Header';
 import './style.css';
 
 const {
