@@ -163,7 +163,7 @@ class Home extends Component {
               page={page}
               pageSize={perPage}
               pageSizes={[25, 50, 100]}
-              isLastPage={'next' in paginationData}
+              isLastPage={!('next' in paginationData)}
               totalItems={20 * (paginationData.total || 0)}
               onChange={this.onChangePagination}
             />
