@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import { DataTable } from 'carbon-components-react';
+import { DataTable, PaginationV2 } from 'carbon-components-react';
 
 import { EndUsersAPI } from 'api/endUsers';
 
@@ -25,7 +25,7 @@ class Home extends Component {
 
     this.state = {
       page: 1,
-      perPage: 10,
+      perPage: 25,
       fetching: false,
       fetchingSuccess: false,
       fetchingFailed: false,
@@ -102,7 +102,20 @@ class Home extends Component {
     return pageData.map(this.getFormattedRow);
   }
 
+  onChangePagination = ({ page, pageSize }) => {
+    this.setState({
+      page,
+      perPage: pageSize
+    }, this.doFetchUsers)
+  }
+
   render() {
+    const {
+      paginationData,
+      page,
+      perPage,
+    } = this.state;
+
     return (
       <div>
         <Header />
@@ -145,6 +158,14 @@ class Home extends Component {
                   </Table>
                 </TableContainer>
               )}
+            />
+            <PaginationV2
+              page={page}
+              pageSize={perPage}
+              pageSizes={[25, 50, 100]}
+              isLastPage={'next' in paginationData}
+              totalItems={20 * (paginationData.total || 0)}
+              onChange={this.onChangePagination}
             />
           </div>
         </main>
