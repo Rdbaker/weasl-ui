@@ -166,6 +166,7 @@ class Home extends Component {
               isLastPage={!('next' in paginationData)}
               totalItems={20 * (paginationData.total || 0)}
               onChange={this.onChangePagination}
+              className="wsl-table-pagination-fixed"
             />
           </div>
         </main>
