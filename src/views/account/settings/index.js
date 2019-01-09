@@ -4,7 +4,8 @@ import Typography from '@material-ui/core/Typography';
 import {
   Form,
   TextInput,
-  Button
+  Button,
+  Toggle,
 } from 'carbon-components-react';
 import './style.css';
 
@@ -30,6 +31,7 @@ class AccountSettings extends Component {
       appName: properties.find(property => property.name === 'company_name').value,
       textLoginMessage: properties.find(property => property.name === 'text_login_message').value,
       emailMagiclink: properties.find(property => property.name === 'email_magiclink').value,
+      smsLoginEnabled: !properties.find(property => property.name === 'sms_login_disabled').value,
       updateFailed: false,
       updateSuccess: false,
     });
@@ -40,12 +42,14 @@ class AccountSettings extends Component {
       appName,
       textLoginMessage,
       emailMagiclink,
+      smsLoginEnabled,
     } = this.state;
 
     try {
       OrgsAPI.updateThemeProperty('company_name', appName);
       OrgsAPI.updateThemeProperty('text_login_message', textLoginMessage);
       OrgsAPI.updateThemeProperty('email_magiclink', emailMagiclink);
+      OrgsAPI.updateThemeProperty('sms_login_disabled', !smsLoginEnabled, 'BOOLEAN');
       this.setState({
         updateFailed: false,
         updateSuccess: true,
@@ -71,6 +75,7 @@ class AccountSettings extends Component {
   onAppNameChange = e => this.setState({ appName: e.target.value })
   onTextMsgChange = e => this.setState({ textLoginMessage: e.target.value })
   onEmailLinkChange = e => this.setState({ emailMagiclink: e.target.value })
+  onToggleSmsLogin = (e) => this.setState({ smsLoginEnabled: e.target.checked })
 
   render() {
     const {
@@ -80,6 +85,7 @@ class AccountSettings extends Component {
       emailMagiclink,
       updateFailed,
       updateSuccess,
+      smsLoginEnabled = true,
     } = this.state;
 
     return (
@@ -95,6 +101,10 @@ class AccountSettings extends Component {
               <TextInput labelText="App Name" id="company_name" value={appName} onChange={this.onAppNameChange} />
               <TextInput labelText="Text Login Message" id="text_login_message" value={textLoginMessage} onChange={this.onTextMsgChange} />
               <TextInput labelText="Email Magiclink" id="email_magiclink" value={emailMagiclink} onChange={this.onEmailLinkChange} />
+              <label>
+                Enable SMS Login
+                <Toggle id="toggle-1" onChange={this.onToggleSmsLogin} defaultToggled={smsLoginEnabled} />
+              </label>
               <Button type="submit" onClick={this.onSubmit}>Save</Button>
             </Form>
           </div>

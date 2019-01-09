@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import { DataTable, PaginationV2 } from 'carbon-components-react';
+import { DataTable, PaginationV2, Modal } from 'carbon-components-react';
 
 import { EndUsersAPI } from 'api/endUsers';
 
@@ -109,16 +109,53 @@ class Home extends Component {
     }, this.doFetchUsers)
   }
 
+  toggleModal = () => {
+    this.setState(prevState => ({ isAttributeModalOpen: !prevState.isAttributeModalOpen }))
+  }
+
+  renderModalContent = () => {
+    const {
+      selectedUserId,
+      pageData,
+      isCreatingNewAttribute,
+    } = this.state;
+
+    const endUser = pageData.find(endUser => endUser.id === selectedUserId)
+
+    // TODO: error state
+    const attrs = Object.entries(endUser.attributes)
+
+    return (
+      <div>
+        {!attrs.length &&
+          <div>This user has no custom attributes.</div>
+        }
+    {!!attrs.length && attrs.map((([attr_name, { trusted, value }]) => <div>{attr_name}: {value} <span>({trusted ? 'trusted' : 'not trusted'})</span></div>))}
+      </div>
+    );
+  }
+
   render() {
     const {
       paginationData,
       page,
       perPage,
+      isAttributeModalOpen,
     } = this.state;
 
     return (
       <div>
         <Header />
+        <Modal
+          open={isAttributeModalOpen}
+          onRequestClose={this.toggleModal}
+          onRequestSubmit={this.toggleModal}
+          primaryButtonDisabled={true}
+          secondaryButtonText="Close"
+          primaryButtonText="Save"
+        >
+          {isAttributeModalOpen && this.renderModalContent()}
+        </Modal>
         <main id="main-content" className="with-header">
           <Paper elevation={0} square={true} className="wsl-heading">
             <div className="constrain-width">
@@ -148,7 +185,7 @@ class Home extends Component {
                     </TableHead>
                     <TableBody>
                       {rows.map(row => (
-                        <TableRow key={row.id}>
+                        <TableRow onClick={() => this.setState({selectedUserId: row.id}, this.toggleModal)} key={row.id}>
                           {row.cells.map(cell => (
                             <TableCell key={cell.id}>{cell.value}</TableCell>
                           ))}
