@@ -28,10 +28,10 @@ class AccountSettings extends Component {
     const properties = data.properties;
     this.setState({
       orgData: data,
-      appName: properties.find(property => property.name === 'company_name').value,
-      textLoginMessage: properties.find(property => property.name === 'text_login_message').value,
-      emailMagiclink: properties.find(property => property.name === 'email_magiclink').value,
-      smsLoginEnabled: !properties.find(property => property.name === 'sms_login_disabled').value,
+      appName: (properties.find(property => property.name === 'company_name') || {}).value,
+      textLoginMessage: (properties.find(property => property.name === 'text_login_message') || {}).value,
+      emailMagiclink: (properties.find(property => property.name === 'email_magiclink') || {}).value,
+      smsLoginEnabled: !(properties.find(property => property.name === 'sms_login_disabled') || {}).value,
       updateFailed: false,
       updateSuccess: false,
     });
