@@ -2,7 +2,7 @@ const COOKIE_NAME = 'WEASL_AUTH';
 
 
 export const getToken = () => {
-  const startIndex = document.cookie.indexOf(COOKIE_NAME);
+  const startIndex = document.cookie.indexOf(`${COOKIE_NAME}=`);
   if (startIndex === -1) {
     return null;
   }
