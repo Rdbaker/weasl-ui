@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { OrgsAPI } from 'api/org';
 import Typography from '@material-ui/core/Typography';
 import {
@@ -8,6 +8,37 @@ import {
   Toggle,
 } from 'carbon-components-react';
 import './style.css';
+
+const hasGate = (orgData, gateName) => {
+  if (!gateName) return false;
+  if (!orgData) return false;
+  if (!orgData.properties.length) return false;
+  const gate = orgData.properties.find(property => {
+    return property.namespace === 'OrgPropertyNamespaces.GATES' && property.name === gateName
+  });
+  return gate && gate.value;
+}
+
+const getSettingValue = (orgData, settingName) => {
+  if (!settingName) return false;
+  if (!orgData) return false;
+  if (!orgData.properties.length) return false;
+  const setting = orgData.properties.find(property => {
+    return property.namespace === 'OrgPropertyNamespaces.SETTINGS' && property.name === settingName
+  });
+  return setting && setting.value;
+}
+
+const getThemeValue = (orgData, themeName) => {
+  if (!themeName) return false;
+  if (!orgData) return false;
+  if (!orgData.properties.length) return false;
+  const theme = orgData.properties.find(property => {
+    return property.namespace === 'OrgPropertyNamespaces.THEME' && property.name === themeName
+  });
+  return theme && theme.value;
+}
+
 
 class AccountSettings extends Component {
   constructor(props) {
@@ -25,13 +56,15 @@ class AccountSettings extends Component {
   doFetchMyOrg = async () => {
     const response = await OrgsAPI.getMyOrg();
     const { data } = await response.json();
-    const properties = data.properties;
     this.setState({
       orgData: data,
-      appName: (properties.find(property => property.name === 'company_name') || {}).value,
-      textLoginMessage: (properties.find(property => property.name === 'text_login_message') || {}).value,
-      emailMagiclink: (properties.find(property => property.name === 'email_magiclink') || {}).value,
-      smsLoginEnabled: !(properties.find(property => property.name === 'sms_login_disabled') || {}).value,
+      appName: getThemeValue(data, 'company_name'),
+      textLoginMessage: getThemeValue(data, 'text_login_message'),
+      emailMagiclink: getThemeValue(data, 'email_magiclink'),
+      smsLoginEnabled: !getThemeValue(data, 'sms_login_disabled'),
+      hasSocialLogin: hasGate(data,'has_social_login'),
+      googleLoginEnabled: getThemeValue(data, 'google_login_enabled'),
+      googleClientId: getSettingValue(data, 'google_client_id'),
       updateFailed: false,
       updateSuccess: false,
     });
@@ -43,6 +76,9 @@ class AccountSettings extends Component {
       textLoginMessage,
       emailMagiclink,
       smsLoginEnabled,
+      googleLoginEnabled,
+      hasSocialLogin,
+      googleClientId,
     } = this.state;
 
     try {
@@ -50,6 +86,10 @@ class AccountSettings extends Component {
       OrgsAPI.updateThemeProperty('text_login_message', textLoginMessage);
       OrgsAPI.updateThemeProperty('email_magiclink', emailMagiclink);
       OrgsAPI.updateThemeProperty('sms_login_disabled', !smsLoginEnabled, 'BOOLEAN');
+      if (hasSocialLogin) {
+        OrgsAPI.updateThemeProperty('google_login_enabled', googleLoginEnabled, 'BOOLEAN');
+        OrgsAPI.updateSettingProperty('google_client_id', googleClientId);
+      }
       this.setState({
         updateFailed: false,
         updateSuccess: true,
@@ -75,7 +115,9 @@ class AccountSettings extends Component {
   onAppNameChange = e => this.setState({ appName: e.target.value })
   onTextMsgChange = e => this.setState({ textLoginMessage: e.target.value })
   onEmailLinkChange = e => this.setState({ emailMagiclink: e.target.value })
-  onToggleSmsLogin = (e) => this.setState({ smsLoginEnabled: e.target.checked })
+  onToggleSmsLogin = e => this.setState({ smsLoginEnabled: e.target.checked })
+  onToggleGoogleLogin = e => this.setState({ googleLoginEnabled: e.target.checked })
+  onGoogleClientIdChange = e => this.setState({ googleClientId: e.target.value })
 
   render() {
     const {
@@ -86,6 +128,9 @@ class AccountSettings extends Component {
       updateFailed,
       updateSuccess,
       smsLoginEnabled = true,
+      hasSocialLogin,
+      googleLoginEnabled,
+      googleClientId,
     } = this.state;
 
     return (
@@ -105,6 +150,15 @@ class AccountSettings extends Component {
                 Enable SMS Login
                 <Toggle id="toggle-1" onChange={this.onToggleSmsLogin} defaultToggled={smsLoginEnabled} />
               </label>
+              {hasSocialLogin &&
+                <Fragment>
+                  <label>
+                    Enable Google Login
+                    <Toggle id="toggle-2" onChange={this.onToggleGoogleLogin} defaultToggled={googleLoginEnabled} />
+                  </label>
+                  <TextInput labelText="Google Client ID" id="google_client_id" value={googleClientId} onChange={this.onGoogleClientIdChange} />
+                </Fragment>
+              }
               <Button type="submit" onClick={this.onSubmit}>Save</Button>
             </Form>
           </div>

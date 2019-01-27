@@ -14,6 +14,17 @@ export const OrgsAPI = {
     })
   },
 
+  updateSettingProperty(name, value, type='STRING') {
+    return fetch(`${API_URL}/orgs/settings/${name}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `bearer ${getToken()}`,
+      },
+      body: JSON.stringify({ value, type }),
+    })
+  },
+
   getMyOrg() {
     return fetch(`${API_URL}/orgs/me`, {
       method: 'GET',
@@ -23,4 +34,17 @@ export const OrgsAPI = {
       },
     })
   },
+
+  patchGate(orgId, gateName, enabled) {
+    return fetch(`${API_URL}/orgs/${orgId}/gates/${gateName}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `bearer ${getToken()}`,
+      },
+      body: JSON.stringify({
+        value: enabled,
+      })
+    })
+  }
 }

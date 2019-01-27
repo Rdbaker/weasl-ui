@@ -3,6 +3,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 
 import { AuthAPI } from 'api/auth';
 import { getToken } from 'utils/auth';
+import { CurrentUser } from 'utils/contexts';
 
 import Home from './views/home';
 import AccountHome from './views/account';
@@ -16,6 +17,7 @@ class App extends Component {
     this.state = {
       checkingLoggedIn: false,
       isLoggedIn: false,
+      currentUser: null,
     };
   }
 
@@ -36,6 +38,7 @@ class App extends Component {
         this.setState({
           isLoggedIn: true,
           checkingLoggedIn: false,
+          currentUser: data,
         });
       }
     }
@@ -75,11 +78,12 @@ class App extends Component {
     const {
       isLoggedIn,
       checkingLoggedIn,
+      currentUser,
     } = this.state;
 
     return () => {
       if (isLoggedIn) {
-        return <AuthedComponent />;
+        return <AuthedComponent currentUser={currentUser} />;
       } else {
         if (checkingLoggedIn) {
           // TODO: render a loading screen or something
@@ -93,13 +97,19 @@ class App extends Component {
 
   render() {
 
+    const {
+      currentUser,
+    } = this.state;
+
     return (
       <BrowserRouter>
         <div className="App">
-          <Route exact={true} path="/" render={this.makeLoginRequiredComponent(Home)} />
-          <Route path="/login" component={EmailLogin}/>
-          <Route path="/account" render={this.makeLoginRequiredComponent(AccountHome)} />
-          <Route path="/verify-token/:token" render={() => <VerifyEmail checkLogin={this.checkLogin} />} />
+          <CurrentUser.Provider value={currentUser}>
+            <Route exact={true} path="/" render={this.makeLoginRequiredComponent(Home)} />
+            <Route path="/login" component={EmailLogin}/>
+            <Route path="/account" render={this.makeLoginRequiredComponent(AccountHome)} />
+            <Route path="/verify-token/:token" render={() => <VerifyEmail checkLogin={this.checkLogin} />} />
+          </CurrentUser.Provider>
         </div>
       </BrowserRouter>
     );

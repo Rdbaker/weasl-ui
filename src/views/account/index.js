@@ -8,6 +8,7 @@ import Header from '../../components/Header';
 import RouteTabs from '../../components/RouteTabs';
 import AccountSettings from './settings';
 import AccountSnippet from './snippet';
+import Admin from './admin';
 
 class AccountHome extends Component {
   render() {
@@ -15,6 +16,11 @@ class AccountHome extends Component {
       { label: "Settings", route: "/account" },
       { label: "Snippet", route: "/account/snippet" }
     ];
+
+    const currentUser = this.props.currentUser;
+    if (currentUser && currentUser.is_admin) {
+      tabs.push({ label: 'Admin', route: '/account/admin' });
+    }
 
     return (
       <div>
@@ -38,6 +44,11 @@ class AccountHome extends Component {
                     <AccountSnippet />
                   </div>
                 )}/>
+                <Route exact={true} path='/account/admin' render={() => (
+                  <div>
+                    <Admin />
+                  </div>
+                )}/>
               </div>
           </div>
         </main>
@@ -47,7 +58,7 @@ class AccountHome extends Component {
 }
 
 AccountHome.contextTypes = {
-  router: PropTypes.object
+  router: PropTypes.object,
 };
 
 export default AccountHome;
