@@ -29,18 +29,14 @@ class Admin extends Component {
       gateValue,
       gateOrgId,
     } = this.state;
-    console.log(1);
     e.preventDefault();
-    console.log(2);
 
     this.setState({
       updatingGate: true,
     });
-    console.log(3);
 
     const response = await OrgsAPI.patchGate(gateOrgId, editingGateName, gateValue);
     const { data } = await response.json();
-    console.log(4);
 
     if (data) {
       this.setState({
@@ -51,7 +47,6 @@ class Admin extends Component {
         gateEditFailed: true,
       });
     }
-    console.log(5);
 
     this.setState({
       updatingGate: false,
