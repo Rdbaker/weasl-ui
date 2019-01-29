@@ -178,18 +178,22 @@ class AccountSettings extends Component {
                 helperText="This is the link that users will land on through the magiclink email- Weasl should be installed on this page"
                 value={emailMagiclink}
                 onChange={this.onEmailLinkChange} />
-              <Toggle
-                id="toggle-1"
-                labelText="Enable SMS Login"
-                onChange={this.onToggleSmsLogin}
-                defaultToggled={smsLoginEnabled} />
+              <label>
+                Enable SMS Login
+                <Toggle
+                  id="toggle-1"
+                  onChange={this.onToggleSmsLogin}
+                  defaultToggled={smsLoginEnabled} />
+              </label>
               {hasSocialLogin &&
                 <Fragment>
-                  <Toggle
-                    labelText="Enable Google Login"
-                    id="toggle-2"
-                    onChange={this.onToggleGoogleLogin}
-                    defaultToggled={googleLoginEnabled} />
+                  <label>
+                    Enable Google Login
+                    <Toggle
+                      id="toggle-2"
+                      onChange={this.onToggleGoogleLogin}
+                      defaultToggled={googleLoginEnabled} />
+                  </label>
                   <TextInput
                     labelText="Google Client ID"
                     id="google_client_id"
