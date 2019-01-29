@@ -9,35 +9,17 @@ import {
 } from 'carbon-components-react';
 import './style.css';
 
-const hasGate = (orgData, gateName) => {
-  if (!gateName) return false;
+const getNamespacedPropertyValue = (orgData, name, namespace) => {
+  if (!name) return false;
   if (!orgData) return false;
   if (!orgData.properties.length) return false;
-  const gate = orgData.properties.find(property => {
-    return property.namespace === 'OrgPropertyNamespaces.GATES' && property.name === gateName
-  });
-  return gate && gate.value;
+  const prop = orgData.properties.find(property => property.namespace === namespace && property.name === name);
+  return prop && prop.value;
 }
 
-const getSettingValue = (orgData, settingName) => {
-  if (!settingName) return false;
-  if (!orgData) return false;
-  if (!orgData.properties.length) return false;
-  const setting = orgData.properties.find(property => {
-    return property.namespace === 'OrgPropertyNamespaces.SETTINGS' && property.name === settingName
-  });
-  return setting && setting.value;
-}
-
-const getThemeValue = (orgData, themeName) => {
-  if (!themeName) return false;
-  if (!orgData) return false;
-  if (!orgData.properties.length) return false;
-  const theme = orgData.properties.find(property => {
-    return property.namespace === 'OrgPropertyNamespaces.THEME' && property.name === themeName
-  });
-  return theme && theme.value;
-}
+const hasGate = (orgData, gateName) => getNamespacedPropertyValue(orgData, gateName, 'OrgPropertyNamespaces.GATES');
+const getSettingValue = (orgData, settingName) => getNamespacedPropertyValue(orgData, settingName, 'OrgPropertyNamespaces.SETTINGS');
+const getThemeValue = (orgData, themeName) => getNamespacedPropertyValue(orgData, themeName, 'OrgPropertyNamespaces.THEME');
 
 
 class AccountSettings extends Component {
@@ -46,6 +28,7 @@ class AccountSettings extends Component {
 
     this.state = {
       orgData: null,
+      allowedDomainInput: '',
     };
   }
 
@@ -65,6 +48,7 @@ class AccountSettings extends Component {
       hasSocialLogin: hasGate(data,'has_social_login'),
       googleLoginEnabled: getThemeValue(data, 'google_login_enabled'),
       googleClientId: getSettingValue(data, 'google_client_id'),
+      allowedDomains: getSettingValue(data, 'allowed_domains'),
       updateFailed: false,
       updateSuccess: false,
     });
@@ -79,6 +63,7 @@ class AccountSettings extends Component {
       googleLoginEnabled,
       hasSocialLogin,
       googleClientId,
+      allowedDomains = [],
     } = this.state;
 
     try {
@@ -90,6 +75,7 @@ class AccountSettings extends Component {
         OrgsAPI.updateThemeProperty('google_login_enabled', googleLoginEnabled, 'BOOLEAN');
         OrgsAPI.updateSettingProperty('google_client_id', googleClientId);
       }
+      OrgsAPI.updateSettingProperty('allowed_domains', JSON.stringify(allowedDomains), 'JSON');
       this.setState({
         updateFailed: false,
         updateSuccess: true,
@@ -118,6 +104,36 @@ class AccountSettings extends Component {
   onToggleSmsLogin = e => this.setState({ smsLoginEnabled: e.target.checked })
   onToggleGoogleLogin = e => this.setState({ googleLoginEnabled: e.target.checked })
   onGoogleClientIdChange = e => this.setState({ googleClientId: e.target.value })
+  onAllowedDomainInputChange = e => this.setState({ allowedDomainInput: e.target.value })
+  onDomainKeyDown = e => {
+    if (e.keyCode == 13) {
+      this.setState(prevState => ({
+        allowedDomains: prevState.allowedDomains.concat([ prevState.allowedDomainInput ]),
+        allowedDomainInput: '',
+      }))
+      e.preventDefault();
+    }
+  }
+  removeDomain = index => {
+    this.setState(prevState => ({
+      allowedDomains: prevState.allowedDomains.slice(0, index).concat(prevState.allowedDomains.slice(index + 1))
+    }))
+  }
+
+  renderDomainHelperText = () => {
+    const {
+      allowedDomains = [],
+    } = this.state;
+    return (
+      <div>
+        <div>If you add domains here, Weasl will only be allowed to run on the provided domains. Otherwise, Weasl can run everywhere.</div>
+        <div>Press enter to add another domain when editing, or press the small X to remove an added domain.</div>
+        {allowedDomains.map((domain, i) => (
+          <div key={domain}>{domain} <span className="domain-remove-x" onClick={() => this.removeDomain(i)}>&times;</span></div>
+        ))}
+      </div>
+    )
+  }
 
   render() {
     const {
@@ -131,10 +147,11 @@ class AccountSettings extends Component {
       hasSocialLogin,
       googleLoginEnabled,
       googleClientId,
+      allowedDomainInput,
     } = this.state;
 
     return (
-      <div>
+      <div className="account-settings-form-container">
         <Typography variant={'body1'}>
             Welcome to your settings! Here you can update information related to your Weasl profile.
         </Typography>
@@ -143,22 +160,51 @@ class AccountSettings extends Component {
             {updateFailed && <div className="form-notification-update-failed">The update failed</div>}
             {updateSuccess && <div className="form-notification-update-success">Update successful!</div>}
             <Form className="wsl-form" onSubmit={this.onSubmit}>
-              <TextInput labelText="App Name" id="company_name" value={appName} onChange={this.onAppNameChange} />
-              <TextInput labelText="Text Login Message" id="text_login_message" value={textLoginMessage} onChange={this.onTextMsgChange} />
-              <TextInput labelText="Email Magiclink" id="email_magiclink" value={emailMagiclink} onChange={this.onEmailLinkChange} />
-              <label>
-                Enable SMS Login
-                <Toggle id="toggle-1" onChange={this.onToggleSmsLogin} defaultToggled={smsLoginEnabled} />
-              </label>
+              <TextInput
+                labelText="App Name"
+                id="company_name"
+                helperText="This name is shown to your users in the magiclink email"
+                value={appName}
+                onChange={this.onAppNameChange} />
+              <TextInput
+                labelText="Text Login Message"
+                id="text_login_message"
+                helperText="This is sent in the login text message and the login code will appear at the end"
+                value={textLoginMessage}
+                onChange={this.onTextMsgChange} />
+              <TextInput
+                labelText="Email Magiclink"
+                id="email_magiclink"
+                helperText="This is the link that users will land on through the magiclink email- Weasl should be installed on this page"
+                value={emailMagiclink}
+                onChange={this.onEmailLinkChange} />
+              <Toggle
+                id="toggle-1"
+                labelText="Enable SMS Login"
+                onChange={this.onToggleSmsLogin}
+                defaultToggled={smsLoginEnabled} />
               {hasSocialLogin &&
                 <Fragment>
-                  <label>
-                    Enable Google Login
-                    <Toggle id="toggle-2" onChange={this.onToggleGoogleLogin} defaultToggled={googleLoginEnabled} />
-                  </label>
-                  <TextInput labelText="Google Client ID" id="google_client_id" value={googleClientId} onChange={this.onGoogleClientIdChange} />
+                  <Toggle
+                    labelText="Enable Google Login"
+                    id="toggle-2"
+                    onChange={this.onToggleGoogleLogin}
+                    defaultToggled={googleLoginEnabled} />
+                  <TextInput
+                    labelText="Google Client ID"
+                    id="google_client_id"
+                    helperText={<a href="" target="_blank">Learn how to set this up</a>}
+                    value={googleClientId}
+                    onChange={this.onGoogleClientIdChange} />
                 </Fragment>
               }
+              <TextInput
+                helperText={this.renderDomainHelperText()}
+                labelText="Allowed Domain"
+                id="allowed_domains"
+                value={allowedDomainInput}
+                onKeyDown={this.onDomainKeyDown}
+                onChange={this.onAllowedDomainInputChange} />
               <Button type="submit" onClick={this.onSubmit}>Save</Button>
             </Form>
           </div>
