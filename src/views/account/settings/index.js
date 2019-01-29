@@ -193,7 +193,7 @@ class AccountSettings extends Component {
                   <TextInput
                     labelText="Google Client ID"
                     id="google_client_id"
-                    helperText={<a href="" target="_blank">Learn how to set this up</a>}
+                    helperText={<a href="http://docs.weasl.in/article/set-up-google-login-with-weasl/?v=1548729637574" target="_blank">Learn how to set this up</a>}
                     value={googleClientId}
                     onChange={this.onGoogleClientIdChange} />
                 </Fragment>
