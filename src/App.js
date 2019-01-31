@@ -83,6 +83,9 @@ class App extends Component {
 
     return () => {
       if (isLoggedIn) {
+        drift && drift.on('ready', () => {
+          drift.identify(currentUser.id, { ...currentUser });
+        });
         return <AuthedComponent currentUser={currentUser} />;
       } else {
         if (checkingLoggedIn) {
