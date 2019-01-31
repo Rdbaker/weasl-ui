@@ -122,13 +122,14 @@ class AccountSettings extends Component {
 
   renderDomainHelperText = () => {
     const {
-      allowedDomains = [],
+      allowedDomains,
     } = this.state;
+
     return (
       <div>
         <div>If you add domains here, Weasl will only be allowed to run on the provided domains. Otherwise, Weasl can run everywhere.</div>
         <div>Press enter to add another domain when editing, or press the small X to remove an added domain.</div>
-        {allowedDomains.map((domain, i) => (
+        {allowedDomains && allowedDomains.map((domain, i) => (
           <div key={domain}>{domain} <span className="domain-remove-x" onClick={() => this.removeDomain(i)}>&times;</span></div>
         ))}
       </div>
@@ -164,13 +165,13 @@ class AccountSettings extends Component {
                 labelText="App Name"
                 id="company_name"
                 helperText="This name is shown to your users in the magiclink email"
-                value={appName}
+                value={appName || ''}
                 onChange={this.onAppNameChange} />
               <TextInput
                 labelText="Text Login Message"
                 id="text_login_message"
                 helperText="This is sent in the login text message and the login code will appear at the end"
-                value={textLoginMessage}
+                value={textLoginMessage || ''}
                 onChange={this.onTextMsgChange} />
               <TextInput
                 labelText="Email Magiclink"
@@ -198,7 +199,7 @@ class AccountSettings extends Component {
                     labelText="Google Client ID"
                     id="google_client_id"
                     helperText={<a href="http://docs.weasl.in/article/set-up-google-login-with-weasl/?v=1548729637574" target="_blank">Learn how to set this up</a>}
-                    value={googleClientId}
+                    value={googleClientId || ''}
                     onChange={this.onGoogleClientIdChange} />
                 </Fragment>
               }
