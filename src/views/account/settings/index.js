@@ -48,7 +48,7 @@ class AccountSettings extends Component {
       hasSocialLogin: hasGate(data,'has_social_login'),
       googleLoginEnabled: getThemeValue(data, 'google_login_enabled'),
       googleClientId: getSettingValue(data, 'google_client_id'),
-      allowedDomains: getSettingValue(data, 'allowed_domains'),
+      allowedDomains: getSettingValue(data, 'allowed_domains') || [],
       updateFailed: false,
       updateSuccess: false,
     });

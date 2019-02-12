@@ -83,9 +83,12 @@ class App extends Component {
 
     return () => {
       if (isLoggedIn) {
-        drift && drift.on('ready', () => {
+        global.drift && global.drift.on('ready', () => {
           drift.identify(currentUser.id, { ...currentUser });
         });
+        global.Sentry && global.Sentry.setUserContext({
+          ...currentUser,
+        })
         return <AuthedComponent currentUser={currentUser} />;
       } else {
         if (checkingLoggedIn) {
