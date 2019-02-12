@@ -86,9 +86,11 @@ class App extends Component {
         global.drift && global.drift.on('ready', () => {
           drift.identify(currentUser.id, { ...currentUser });
         });
-        global.Sentry && global.Sentry.setUserContext && global.Sentry.setUserContext({
-          ...currentUser,
-        })
+
+        global.Sentry && global.Sentry.configureScope && global.Sentry.configureScope((scope) => {
+          scope.setUser(currentUser);
+        });
+
         return <AuthedComponent currentUser={currentUser} />;
       } else {
         if (checkingLoggedIn) {
