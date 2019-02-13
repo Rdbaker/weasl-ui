@@ -129,6 +129,7 @@ class AccountSettings extends Component {
       <div>
         <div>If you add domains here, Weasl will only be allowed to run on the provided domains. Otherwise, Weasl can run everywhere.</div>
         <div>Press enter to add another domain when editing, or press the small X to remove an added domain.</div>
+        <div>Domains need to be in the format: www.website.com or website.com</div>
         {allowedDomains && allowedDomains.map((domain, i) => (
           <div key={domain}>{domain} <span className="domain-remove-x" onClick={() => this.removeDomain(i)}>&times;</span></div>
         ))}
