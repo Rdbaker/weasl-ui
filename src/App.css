@@ -11,3 +11,7 @@
 body {
   background-color: #f4f7fb;
 }
+
+.bx--form__helper-text {
+  max-height: none !important; /* suck it */
+}

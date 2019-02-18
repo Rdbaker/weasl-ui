@@ -7,18 +7,16 @@ import { OrgsAPI } from 'api/org';
 import './style.css';
 
 const getSnippet = (clientId) => (`(function(window, document) {
-if (window.weasl) { console.error('Weasl embed already included'); return; }
-var w = {}, m = ['init', 'login', 'signup', 'setAttribute', 'getCurrentUser']; w._c = [];
-m.forEach(function(me) {w[me] = function() {w._c.push([me, arguments])};});
-var elt = document.createElement('script');
-elt.type = "text/javascript"; elt.async = true;
-elt.src = "https://js.weasl.in/embed/shim.js";
-var before = document.getElementsByTagName('script')[0];
-before.parentNode.insertBefore(elt, before);
-window.weasl = w;
+  if (window.weasl) console.error('Weasl embed already included');
+  window.weasl = {}, m = ['init', 'login', 'signup', 'setAttribute', 'getCurrentUser', 'logout', 'debug']; window.weasl._c = [];
+  m.forEach(me => window.weasl[me] = function() {window.weasl._c.push([me, arguments])});
+  var elt = document.createElement('script');
+  elt.type = "text/javascript"; elt.async = true;
+  elt.src = "https://js.weasl.in/embed/shim.js";
+  var before = document.getElementsByTagName('script')[0];
+  before.parentNode.insertBefore(elt, before);
 })(window, document, undefined);
-weasl.init('${clientId}');
-`)
+weasl.init('${clientId}');`)
 
 class AccountSnippet extends Component {
   constructor(props) {
@@ -67,7 +65,7 @@ class AccountSnippet extends Component {
             {getSnippet(clientId)}
           </CodeSnippet>
         }
-        <textarea className="wsl-snippet-textarea" ref={elt => this.textArea = elt} defaultValue={getSnippet(clientId)} />
+        <textarea id="weasl-snippet" className="wsl-snippet-textarea" ref={elt => this.textArea = elt} defaultValue={getSnippet(clientId)} />
       </div>
     );
   }

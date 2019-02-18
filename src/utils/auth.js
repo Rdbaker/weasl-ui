@@ -1,7 +1,5 @@
-const COOKIE_NAME = 'WEASL_AUTH';
-
-
 export const getToken = () => {
+  const COOKIE_NAME = `WEASL_AUTH-${global.WEASL_ON_WEASL_CLIENT_ID}`;
   const startIndex = document.cookie.indexOf(`${COOKIE_NAME}=`);
   if (startIndex === -1) {
     return null;
@@ -16,6 +14,7 @@ export const getToken = () => {
 };
 
 export const setToken = (token) => {
+  const COOKIE_NAME = `WEASL_AUTH-${global.WEASL_ON_WEASL_CLIENT_ID}`;
   // TODO: this should be configurable via settings
   const expireDate = new Date();
   expireDate.setDate(expireDate.getDate() + 7);

@@ -1,52 +1,91 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 
-import { AuthAPI } from 'api/auth';
-import { getToken } from 'utils/auth';
+import { WEASL_ON_WEASL_CLIENT_ID, WEASL_ON_WEASL_SHIM_URL, DEBUG } from 'constants/resources';
 import { CurrentUser } from 'utils/contexts';
 
 import Home from './views/home';
 import AccountHome from './views/account';
-import { EmailLogin, VerifyEmail } from 'views/login';
+import { EmailLogin, VerifyEmail, WeaslLogin } from 'views/login';
 import './App.css';
+
+global.WEASL_ON_WEASL_CLIENT_ID = WEASL_ON_WEASL_CLIENT_ID;
 
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      checkingLoggedIn: false,
-      isLoggedIn: false,
       currentUser: null,
+      waitingOnWeasl: false,
     };
   }
 
-  checkLogin = async () => {
-    const token = getToken();
-    if (token) {
-      this.setState({
-        checkingLoggedIn: true,
-      });
-      const response = await AuthAPI.getMe();
-      const { data } = await response.json();
-      if (!data) {
-        this.setState({
-          isLoggedIn: false,
-          checkingLoggedIn: false,
-        });
-      } else {
-        this.setState({
-          isLoggedIn: true,
-          checkingLoggedIn: false,
-          currentUser: data,
-        });
-      }
+  makeWeaslOnloadFunc = () => {
+    const component = this;
+    this.setState({
+      waitingOnWeasl: true,
+    });
+    return weaslApi => {
+      weaslApi
+        .getCurrentUser()
+        .then((user) => {
+          component.setState({
+            isLoggedIn: true,
+            waitingOnWeasl: false,
+            currentUser: user.data,
+          })
+        })
+        .catch(() => {
+          component.setState({
+            isLoggedIn: false,
+            waitingOnWeasl: false,
+          })
+        })
+    }
+  }
+
+  makeWeaslOnEmailVerifyFunc = () => {
+    const component = this;
+    return weaslApi => {
+      weaslApi
+        .getCurrentUser()
+        .then((user) => {
+          component.setState({
+            isLoggedIn: true,
+            waitingOnWeasl: false,
+            currentUser: user.data,
+          })
+        })
+        .catch(() => {
+          component.setState({
+            isLoggedIn: false,
+            waitingOnWeasl: false,
+          })
+        })
     }
   }
 
   componentDidMount() {
-    this.checkLogin();
-    this.mountDrift();
+    this.mountWeasl();
+    global.weasl.onload = this.makeWeaslOnloadFunc();
+    global.weasl.onEmailVerify = this.makeWeaslOnEmailVerifyFunc();
+    if (!DEBUG) {
+      this.mountDrift();
+    }
+  }
+
+  mountWeasl = () => {
+    if (global.weasl) return;
+    global.weasl = {};
+    const m = ['init', 'login', 'signup', 'setAttribute', 'getCurrentUser', 'logout', 'debug']; global.weasl._c = [];
+    m.forEach(me => global.weasl[me] = function() {global.weasl._c.push([me, arguments])});
+    var elt = document.createElement('script');
+    elt.type = "text/javascript"; elt.async = true;
+    elt.src = WEASL_ON_WEASL_SHIM_URL;
+    var before = document.getElementsByTagName('script')[0];
+    before.parentNode.insertBefore(elt, before);
+    global.weasl.init(WEASL_ON_WEASL_CLIENT_ID);
   }
 
   mountDrift = () => {
@@ -77,8 +116,8 @@ class App extends Component {
   makeLoginRequiredComponent(AuthedComponent) {
     const {
       isLoggedIn,
-      checkingLoggedIn,
       currentUser,
+      waitingOnWeasl,
     } = this.state;
 
     return () => {
@@ -93,12 +132,12 @@ class App extends Component {
 
         return <AuthedComponent currentUser={currentUser} />;
       } else {
-        if (checkingLoggedIn) {
-          // TODO: render a loading screen or something
-          return <AuthedComponent />;
-        } else {
-          return <EmailLogin/>;
-        }
+        return <WeaslLogin onLogin={(user) => {
+          this.setState({
+            isLoggedIn: true,
+            currentUser: user,
+          })
+        }} waitingOnWeasl={waitingOnWeasl}/>;
       }
     }
   }
@@ -117,6 +156,7 @@ class App extends Component {
             <Route path="/login" component={EmailLogin}/>
             <Route path="/account" render={this.makeLoginRequiredComponent(AccountHome)} />
             <Route path="/verify-token/:token" render={() => <VerifyEmail checkLogin={this.checkLogin} />} />
+            <Route path="/verify" render={() => <WeaslLogin checkLogin={this.checkLogin} />} />
           </CurrentUser.Provider>
         </div>
       </BrowserRouter>
