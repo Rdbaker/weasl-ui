@@ -122,6 +122,9 @@ class App extends Component {
 
     return () => {
       if (isLoggedIn) {
+        if (!currentUser) {
+          debugger
+        }
         global.drift && global.drift.on('ready', () => {
           drift.identify(currentUser.id, { ...currentUser });
         });
