@@ -11,6 +11,16 @@ import AccountSnippet from './snippet';
 import Admin from './admin';
 
 class AccountHome extends Component {
+  currentUserIsAdmin = (currentUser) => {
+    if (!currentUser) {
+      return false;
+    }
+
+    const property = currentUser.attributes.is_weasl_admin
+
+    return property && property.value === true && property.trusted === true
+  }
+
   render() {
     var tabs = [
       { label: "Settings", route: "/account" },
@@ -18,7 +28,7 @@ class AccountHome extends Component {
     ];
 
     const currentUser = this.props.currentUser;
-    if (currentUser && currentUser.is_admin) {
+    if (this.currentUserIsAdmin(currentUser)) {
       tabs.push({ label: 'Admin', route: '/account/admin' });
     }
 
