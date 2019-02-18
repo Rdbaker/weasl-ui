@@ -33,7 +33,7 @@ class App extends Component {
           component.setState({
             isLoggedIn: true,
             waitingOnWeasl: false,
-            currentUser: user.data,
+            currentUser: user,
           })
         })
         .catch(() => {
@@ -54,7 +54,7 @@ class App extends Component {
           component.setState({
             isLoggedIn: true,
             waitingOnWeasl: false,
-            currentUser: user.data,
+            currentUser: user,
           })
         })
         .catch(() => {
@@ -122,9 +122,6 @@ class App extends Component {
 
     return () => {
       if (isLoggedIn) {
-        if (!currentUser) {
-          debugger
-        }
         global.drift && global.drift.on('ready', () => {
           drift.identify(currentUser.id, { ...currentUser });
         });
