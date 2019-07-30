@@ -1,0 +1,8 @@
+.line-chart-tooltip-container {
+  background: #FFFFFF;
+  opacity: 0.95;
+  padding: 16px;
+  box-shadow: 1px 2px 5px rgb(107,107,107, 0.75);
+  border-radius: 8px;
+  animation: floater 5s ease infinite;
+}

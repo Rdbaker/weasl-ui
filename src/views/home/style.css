@@ -9,11 +9,6 @@
   padding-bottom: 15px;
 }
 
-.wsl-table-pagination-fixed {
-  position: fixed;
-  bottom: 0;
-}
-
 .weasl-onboarding-setup-steps {
   width: 50%;
   margin: 130px auto;

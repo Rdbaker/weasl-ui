@@ -30,4 +30,13 @@ export const EndUsersAPI = {
       },
     })
   },
+  getEndUserAggregateLogins() {
+    return fetch(`${API_URL}/end_users/aggregate/logins`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `bearer ${getToken()}`,
+      },
+    })
+  }
 }
