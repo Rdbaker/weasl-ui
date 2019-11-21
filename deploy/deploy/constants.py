@@ -14,7 +14,7 @@ class Constants(object):
         'production': 'app-weasl-in',
     }
     AUTHOR = getpass.getuser()
-    REPO_SSH = 'git@bitbucket.org:weasl/weasl-ui.git'
+    REPO_SSH = 'git@github.com:Rdbaker/weasl-ui.git'
     TMP_DIR = os.path.join(os.getcwd(), 'tmp')
     REPO_DIR = os.path.join(TMP_DIR, 'weasl-ui')
     DIST_DIR = os.path.join(REPO_DIR, 'dist')

@@ -65,7 +65,7 @@ class AccountSnippet extends Component {
             {getSnippet(clientId)}
           </CodeSnippet>
         }
-        <textarea id="weasl-snippet" className="wsl-snippet-textarea" ref={elt => this.textArea = elt} defaultValue={getSnippet(clientId)} />
+        {clientId && <textarea id="weasl-snippet" className="wsl-snippet-textarea" ref={elt => this.textArea = elt} defaultValue={getSnippet(clientId)} />}
       </div>
     );
   }
