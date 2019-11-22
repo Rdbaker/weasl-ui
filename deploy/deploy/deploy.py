@@ -12,8 +12,7 @@ from sys import exit
 
 import boto3
 
-from constants import Constants
-
+from .constants import Constants
 logging.basicConfig(format='%(name)-12s: %(levelname)-8s:%(message)s', level=logging.INFO)
 deploy_logger = logging.getLogger('weasl.uploader')
 
@@ -58,6 +57,7 @@ def upload_files(bucket):
         reldir = os.path.relpath('.', Constants.DIST_DIR)
         relfile = os.path.join(reldir, fname)
         # boto3 doesn't like relative files
+        # uploadfile = 'widget/{}'.format(os.path.relpath(fname, os.getcwd()))
         uploadfile = os.path.relpath(fname, Constants.DIST_DIR)
         # get the file extension
         _, file_extension = os.path.splitext(relfile)
@@ -73,6 +73,7 @@ def upload_files(bucket):
             local_file=relfile, remote_file=uploadfile, bucket=bucket.name)
         )
         bucket.upload_file(relfile, uploadfile, ExtraArgs=extra_args)
+
 
 def make_clean():
     deploy_logger.info(subprocess.check_output(Constants.COMMANDS['clean']))

@@ -3,7 +3,7 @@
 """\
 © Copyright 2016, Partnr. All rights reserved.
 """
-from deploy import upload as deploy_upload
+from .deploy import upload as deploy_upload
 
 
 def upload():

@@ -26,3 +26,4 @@ package-lock.json
 deploy/deploy/tmp/*
 dist/deploys/*
 dist/*js*
+*.egg-info*

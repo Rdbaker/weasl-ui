@@ -34,6 +34,7 @@ class Constants(object):
         '.ttf':   'application/x-font-woff',
         '.css':   'text/css',
         '.gif':   'image/gif',
+        '.svg':   'image/svg+xml',
     }
 
     @classmethod
